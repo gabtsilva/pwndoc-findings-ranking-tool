@@ -1,9 +1,19 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
-const client = new MongoClient(url);
+
+let client = null;
+
+let count = process.argv[2];
+
+if(count === undefined){
+    console.error("Please provide a count parameter. For example, to retrieve the TOP 10 findings run 'npm start 10'");
+    process.exit(1);
+}else{
+    client = new MongoClient(process.env.DB_URI);
+}
 
 async function main(){
-    await client.connect(process.env.DB_URI);
+    await client.connect();
     const db = client.db('pwndoc');
     const collection = db.collection("audits");
 
@@ -19,7 +29,7 @@ async function main(){
             }
         })
     });
-    let sortedArr = new Map([...map.entries()].sort().slice(0,10));
+    let sortedArr = new Map([...map.entries()].sort().slice(0,parseInt(count)));
     console.log(sortedArr);
     return 'done';
 }
