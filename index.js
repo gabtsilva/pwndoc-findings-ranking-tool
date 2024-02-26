@@ -17,6 +17,7 @@ async function main(){
     const db = client.db('pwndoc');
     const collection = db.collection("audits");
 
+
     const docs = await collection.find({}).toArray();
     let map = new Map();
     docs.forEach(element => {
@@ -29,9 +30,18 @@ async function main(){
             }
         })
     });
-    let sortedArr = new Map([...map.entries()].sort().slice(0,parseInt(count)));
-    console.log(sortedArr);
-    return 'done';
+
+    let output = "";
+    let index = 1;
+    
+    const sortedMap = new Map([...map.entries()].sort().slice(0,parseInt(count)));
+
+    sortedMap.forEach((value, key) => {
+        output += `${index} | ${key} - Found ${value} time(s)\n`;
+        index++;
+    })
+    output += `\nStatistics based on ${docs.length} audit(s) in PWNDOC's database`
+    return output;
 }
 
 main().then(console.log).catch(console.error).finally(() => client.close());
