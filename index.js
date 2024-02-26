@@ -1,16 +1,8 @@
 const { MongoClient } = require('mongodb');
+const fs = require('fs');
 require('dotenv').config();
 
-let client = null;
-
-let count = process.argv[2];
-
-if(count === undefined){
-    console.error("Please provide a count parameter. For example, to retrieve the TOP 10 findings run 'npm start 10'");
-    process.exit(1);
-}else{
-    client = new MongoClient(process.env.DB_URI);
-}
+const client = new MongoClient(process.env.DB_URI);
 
 async function main(){
     await client.connect();
@@ -32,16 +24,16 @@ async function main(){
     });
 
     let output = "";
-    let index = 1;
     
-    const sortedMap = new Map([...map.entries()].sort().slice(0,parseInt(count)));
+    const sortedMap = new Map([...map.entries()].sort((a,b) => b[1] - a[1]));
 
-    sortedMap.forEach((value, key) => {
-        output += `${index} | ${key} - Found ${value} time(s)\n`;
-        index++;
-    })
-    output += `\nStatistics based on ${docs.length} audit(s) in PWNDOC's database`
-    return output;
+    sortedMap.forEach((value, key) =>output += `${key} - Found ${value} time(s)\n`);
+
+    output += `\nStatistics based on ${docs.length} audit(s) in PWNDOC's database`;
+
+    fs.writeFileSync('./output.txt',output);
+    
+    return 'File generated';
 }
 
 main().then(console.log).catch(console.error).finally(() => client.close());

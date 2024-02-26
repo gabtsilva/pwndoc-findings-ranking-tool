@@ -1,0 +1,7 @@
+.NET Misconfiguration: Use of Impersonation - Found 2 time(s)
+Active directory Users with non-expiring passwords - Found 1 time(s)
+Active domain accounts without being used for a long time - Found 1 time(s)
+AMSI Bypass and PowerShell Availability - Found 1 time(s)
+AdminCount attribute set on common users - Found 1 time(s)
+
+Statistics based on 2 audit(s) in PWNDOC's database
